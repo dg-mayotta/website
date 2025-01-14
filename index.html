@@ -30,11 +30,19 @@
 
         .content {
             text-align: center;
-            font-size: 2.5rem;
-            animation: blink-cursor 0.8s steps(5, end) 1 forwards, write-text 4s steps(26) 1 forwards;
+            font-size: 1.2rem; /* Smaller typewriter-style text */
+            white-space: nowrap; /* Ensures text stays on one line */
+            overflow: hidden;
+            border-right: 2px solid white; /* Typewriter cursor effect */
         }
 
-        @keyframes blink-cursor {
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+        }
+
+        @keyframes blink-cursor-once {
             50% {
                 opacity: 0;
             }
@@ -45,14 +53,10 @@
             to { width: 100%; }
         }
 
-        .cursor {
-            animation: blink-cursor 0.8s infinite;
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            font-size: 0.8rem;
+        @keyframes blink-cursor-infinite {
+            50% {
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -71,18 +75,32 @@
         const typedTextElement = document.getElementById("typed-text");
         const cursorElement = document.querySelector(".cursor");
         let index = 0;
+        let blinkCount = 0;
 
+        // Blink cursor 5 times before typing starts
+        function initialBlinkCursor() {
+            if (blinkCount < 5) {
+                cursorElement.style.animation = "blink-cursor-once 0.5s steps(1, end) 1";
+                blinkCount++;
+                setTimeout(initialBlinkCursor, 500);
+            } else {
+                cursorElement.style.animation = "none"; // Stop blinking
+                typeText();
+            }
+        }
+
+        // Type the text with the cursor
         function typeText() {
             if (index < typedText.length) {
                 typedTextElement.textContent += typedText[index];
                 index++;
                 setTimeout(typeText, 80);
             } else {
-                cursorElement.style.animation = "blink-cursor 0.8s infinite";
+                cursorElement.style.animation = "blink-cursor-infinite 0.8s infinite"; // Resume blinking
             }
         }
 
-        typeText();
+        initialBlinkCursor();
     </script>
 </body>
 </html>

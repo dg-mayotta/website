@@ -5,102 +5,345 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mayotta - Simplifying AI Adoption</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
+            margin: 0;
+            padding: 0;
             background-color: black;
             color: white;
-            font-family: 'Courier New', monospace;
+            font-family: 'Special Elite', monospace;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .tilt-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
         }
 
         .logo {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 100px;
-            height: 100px;
-            background-image: url('placeholder.png');
-            background-size: contain;
-            background-repeat: no-repeat;
+            position: fixed;
+            top: 30px;
+            left: 40px;
+            font-size: 32px;
+            opacity: 0;
+            letter-spacing: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: logoFadeIn 1s ease 0.5s forwards;
+            z-index: 10;
+        }
+
+        .logo:hover {
+            opacity: 1;
+            text-shadow: 0 0 20px rgba(255,255,255,0.8);
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .typing-container {
+            position: relative;
+            font-size: 3rem;
             text-align: center;
-            font-size: 1.2rem; /* Smaller typewriter-style text */
-            white-space: nowrap; /* Ensures text stays on one line */
-            overflow: hidden;
-            border-right: 2px solid white; /* Typewriter cursor effect */
+            opacity: 1;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            font-size: 0.8rem;
+        .typing-text {
+            display: inline-block;
+            white-space: nowrap;
+            margin: 0;
+            color: #FFFFFF;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            opacity: 1;
         }
 
-        @keyframes blink-cursor-once {
-            50% {
-                opacity: 0;
-            }
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background-color: white;
+            margin-left: 2px;
+            vertical-align: text-top;
+            animation: blink 1s step-end infinite;
         }
 
-        @keyframes write-text {
-            from { width: 0; }
-            to { width: 100%; }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9rem;
+            opacity: 0;
+            z-index: 2;
         }
 
-        @keyframes blink-cursor-infinite {
-            50% {
-                opacity: 0;
-            }
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .circuit-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .pulse {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes logoFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 0.4; transform: translateY(0); }
+        }
+
+        @keyframes containerFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes footerFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 0.7; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.2; }
+            100% { transform: scale(1); opacity: 0.1; }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
-    <div class="logo"></div>
-    <div class="content">
-        <span id="typed-text"></span>
-        <span class="cursor">|</span>
-    </div>
-    <div class="footer">
-        © [2025] Mayotta Limited. All rights reserved. Simplifying AI Adoption.
+    <div class="tilt-container">
+        <div class="circuit-pattern"></div>
+        <div class="pulse"></div>
+        <canvas id="particle-canvas"></canvas>
+        <div class="overlay"></div>
+        <div class="logo">MAYOTTA</div>
+        <div class="content">
+            <div class="typing-container">
+                <span class="typing-text"></span>
+                <span class="cursor"></span>
+            </div>
+        </div>
+        <footer>
+            © 2025 Mayotta Limited. All rights reserved.
+        </footer>
     </div>
 
     <script>
-        const typedText = "Mayotta. Simplifying AI Adoption.";
-        const typedTextElement = document.getElementById("typed-text");
-        const cursorElement = document.querySelector(".cursor");
-        let index = 0;
-        let blinkCount = 0;
+        // Particle system
+        class Particle {
+            constructor(canvas, x, y) {
+                this.canvas = canvas;
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.life = Math.random() * 0.5 + 0.5;
+            }
 
-        // Blink cursor 5 times before typing starts
-        function initialBlinkCursor() {
-            if (blinkCount < 5) {
-                cursorElement.style.animation = "blink-cursor-once 0.5s steps(1, end) 1";
-                blinkCount++;
-                setTimeout(initialBlinkCursor, 500);
-            } else {
-                cursorElement.style.animation = "none"; // Stop blinking
-                typeText();
+            update(mouseX, mouseY) {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 100) {
+                    this.x += dx * 0.01;
+                    this.y += dy * 0.01;
+                }
+
+                this.life -= 0.005;
+
+                if (this.x < 0 || this.x > this.canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > this.canvas.height) this.speedY *= -1;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
 
-        // Type the text with the cursor
-        function typeText() {
-            if (index < typedText.length) {
-                typedTextElement.textContent += typedText[index];
-                index++;
-                setTimeout(typeText, 80);
-            } else {
-                cursorElement.style.animation = "blink-cursor-infinite 0.8s infinite"; // Resume blinking
+        class ParticleSystem {
+            constructor() {
+                this.canvas = document.getElementById('particle-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.mouseX = 0;
+                this.mouseY = 0;
+                this.resize();
+                this.init();
+
+                window.addEventListener('resize', () => this.resize());
+                window.addEventListener('mousemove', (e) => {
+                    this.mouseX = e.clientX;
+                    this.mouseY = e.clientY;
+                });
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            init() {
+                const particleCount = Math.min(window.innerWidth * window.innerHeight / 10000, 100);
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push(new Particle(
+                        this.canvas,
+                        Math.random() * this.canvas.width,
+                        Math.random() * this.canvas.height
+                    ));
+                }
+                this.animate();
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                this.particles.forEach((particle, index) => {
+                    particle.update(this.mouseX, this.mouseY);
+                    particle.draw(this.ctx);
+
+                    if (particle.life <= 0) {
+                        this.particles[index] = new Particle(
+                            this.canvas,
+                            Math.random() * this.canvas.width,
+                            Math.random() * this.canvas.height
+                        );
+                    }
+                });
+
+                requestAnimationFrame(() => this.animate());
             }
         }
 
-        initialBlinkCursor();
+        // Typewriter effect
+        class Typewriter {
+            constructor(element, text, delay = 100) {
+                this.element = element;
+                this.text = text;
+                this.delay = delay;
+                this.currentChar = 0;
+                this.typing = false;
+            }
+
+            start() {
+                if (this.typing) return;
+                this.typing = true;
+                this.type();
+            }
+
+            type() {
+                if (this.currentChar < this.text.length) {
+                    this.element.textContent += this.text.charAt(this.currentChar);
+                    this.currentChar++;
+                    setTimeout(() => this.type(), this.delay);
+                } else {
+                    this.typing = false;
+                    // Show footer after typing completes
+                    const footer = document.querySelector('footer');
+                    footer.style.animation = 'footerFadeIn 1s ease forwards';
+                }
+            }
+        }
+
+        // Initialize everything
+        window.addEventListener('load', () => {
+            new ParticleSystem();
+
+            // Start typewriter after initial delay
+            setTimeout(() => {
+                const typewriter = new Typewriter(
+                    document.querySelector('.typing-text'),
+                    'Mayotta. Simplifying AI Adoption',
+                    100
+                );
+                typewriter.start();
+            }, 2000);
+        });
+
+        // Tilt effect
+        const container = document.querySelector('.tilt-container');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+            container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
     </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
         body {
             background-color: black;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', monospace;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -31,13 +31,22 @@
         .content {
             text-align: center;
             font-size: 2.5rem;
-            animation: blink-cursor 0.8s infinite;
+            animation: blink-cursor 0.8s steps(5, end) 1 forwards, write-text 4s steps(26) 1 forwards;
         }
 
         @keyframes blink-cursor {
             50% {
                 opacity: 0;
             }
+        }
+
+        @keyframes write-text {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .cursor {
+            animation: blink-cursor 0.8s infinite;
         }
 
         .footer {
@@ -67,9 +76,9 @@
             if (index < typedText.length) {
                 typedTextElement.textContent += typedText[index];
                 index++;
-                setTimeout(typeText, 80); // Adjust the typing speed here
+                setTimeout(typeText, 80);
             } else {
-                cursorElement.style.animation = "none";
+                cursorElement.style.animation = "blink-cursor 0.8s infinite";
             }
         }
 

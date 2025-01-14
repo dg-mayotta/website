@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mayotta - Simplifying AI Adoption</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 100px;
+            height: 100px;
+            background-image: url('placeholder.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .content {
+            text-align: center;
+            font-size: 2.5rem;
+            animation: blink-cursor 0.8s infinite;
+        }
+
+        @keyframes blink-cursor {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo"></div>
+    <div class="content">
+        <span id="typed-text"></span>
+        <span class="cursor">|</span>
+    </div>
+    <div class="footer">
+        © [2025] Mayotta Limited. All rights reserved. Simplifying AI Adoption.
+    </div>
+
+    <script>
+        const typedText = "Mayotta. Simplifying AI Adoption.";
+        const typedTextElement = document.getElementById("typed-text");
+        const cursorElement = document.querySelector(".cursor");
+        let index = 0;
+
+        function typeText() {
+            if (index < typedText.length) {
+                typedTextElement.textContent += typedText[index];
+                index++;
+                setTimeout(typeText, 80); // Adjust the typing speed here
+            } else {
+                cursorElement.style.animation = "none";
+            }
+        }
+
+        typeText();
+    </script>
+</body>
+</html>
